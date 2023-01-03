@@ -1,0 +1,31 @@
+version: "3.8"
+services:
+  frontend:
+    build: frontend
+    depends_on:
+      - backend
+    tty: true
+    volumes:
+      - ./frontend/public:/frontend/public:cached,ro
+      - ./frontend/src:/frontend/src:cached,ro
+    ports:
+      - "3000:3000"
+
+  backend:
+    build: backend
+    depends_on:
+      - database
+    tty: true
+    volumes:
+      - ./backend/bin:/backend/bin:cached,ro
+      - ./backend/src:/backend/src:cached,ro
+    ports:
+      - "3001:3001"
+    environment:
+      DATABASE_USER: "root"
+      DATABASE_PASSWORD: "1234"
+
+  database:
+    image: mongo:latest
+    ports:
+      - "27017:27017"

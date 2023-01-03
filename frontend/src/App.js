@@ -9,7 +9,6 @@ import NoMatch from "./Components/NoMatch";
 
 // Lazy loaded
 const Videos = React.lazy(() => import ("./Components/Videos"));
-// const Home = React.lazy(() => import ("./Components/Home"));
 
 function App() {
   return (

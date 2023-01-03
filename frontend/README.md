@@ -2,10 +2,6 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Public Demo Link
-
-Open this app [https://serene-ritchie-bcaa67.netlify.app/](https://serene-ritchie-bcaa67.netlify.app/)
-
 ## Available Scripts
 
 In the project directory, you can run:

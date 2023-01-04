@@ -2,6 +2,8 @@ version: "3.8"
 services:
   frontend:
     build: frontend
+    environment:
+      API_URL: $API_URL
     depends_on:
       - backend
     tty: true
@@ -9,23 +11,125 @@ services:
       - ./frontend/public:/frontend/public:cached,ro
       - ./frontend/src:/frontend/src:cached,ro
     ports:
-      - "3000:3000"
+      - $UI_PORT:$UI_PORT
+    networks:
+      - app-network
 
   backend:
     build: backend
+    env_file: ./.env
     depends_on:
+      - db-seed
       - database
+      - rabbitmq
     tty: true
+    command: ["npm", "start"]
     volumes:
       - ./backend/bin:/backend/bin:cached,ro
       - ./backend/src:/backend/src:cached,ro
     ports:
-      - "3001:3001"
+      - $APP_PORT:$APP_PORT
     environment:
-      DATABASE_USER: "root"
-      DATABASE_PASSWORD: "1234"
+      APP_PORT: $APP_PORT
+      MONGO_HOST: database
+      MONGO_PORT: $MONGO_PORT
+      MONGO_DB: $MONGO_DB
+      LOG_LEVEL: $LOG_LEVEL
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: $RABBITMQ_PORT
+      SEARCH_QUERY_QUEUE: $SEARCH_QUERY_QUEUE
+      YOUTUBE_API_URL: $YOUTUBE_API_URL
+    networks:
+      - app-network
+
+  producer:
+    build: backend
+    env_file: ./.env
+    restart: on-failure
+    depends_on:
+      - database
+      - rabbitmq
+    links: 
+      - rabbitmq
+    tty: true
+    command: ["npm", "run", "fetchYoutubeVideosProducerJob"]
+    environment:
+      MONGO_HOST: database
+      MONGO_PORT: $MONGO_PORT
+      MONGO_DB: $MONGO_DB
+      LOG_LEVEL: $LOG_LEVEL
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: $RABBITMQ_PORT
+      SEARCH_QUERY_QUEUE: $SEARCH_QUERY_QUEUE
+      YOUTUBE_API_URL: $YOUTUBE_API_URL
+    networks:
+      - app-network
+
+  consumer:
+    build: backend
+    env_file: ./.env
+    restart: on-failure
+    depends_on:
+      - producer
+      - database
+      - rabbitmq
+    links: 
+      - rabbitmq
+    tty: true
+    command: ["npm", "run", "fetchYoutubeVideosConsumerJob"]
+    environment:
+      MONGO_HOST: database
+      MONGO_PORT: $MONGO_PORT
+      MONGO_DB: $MONGO_DB
+      LOG_LEVEL: $LOG_LEVEL
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: $RABBITMQ_PORT
+      SEARCH_QUERY_QUEUE: $SEARCH_QUERY_QUEUE
+      YOUTUBE_API_URL: $YOUTUBE_API_URL
+    networks:
+      - app-network
+
+  db-seed:
+    build: backend
+    env_file: ./.env
+    depends_on:
+      - database
+    tty: true
+    command: ["npm", "run", "seed:db"]
+    environment:
+      MONGO_HOST: database
+      MONGO_PORT: $MONGO_PORT
+      MONGO_DB: $MONGO_DB
+      LOG_LEVEL: $LOG_LEVEL
+    networks:
+      - app-network
 
   database:
     image: mongo:latest
+    env_file: ./.env
+    depends_on:
+      - rabbitmq
+    environment:
+      MONGO_PORT: $MONGO_PORT
     ports:
-      - "27017:27017"
+      - $MONGO_PORT:$MONGO_PORT
+    volumes:
+      - db:/data/db
+    networks:
+      - app-network
+
+  rabbitmq:
+    image: rabbitmq:3.8-management-alpine
+    env_file: ./.env
+    ports:
+      - $RABBITMQ_PORT:$RABBITMQ_PORT
+      - $RABBITMQ_MANAGEMENT_PORT:$RABBITMQ_MANAGEMENT_PORT
+    networks:
+      - app-network
+
+volumes:
+  db:
+
+networks:
+  app-network:
+    driver: bridge

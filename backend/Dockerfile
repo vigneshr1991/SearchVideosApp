@@ -5,4 +5,6 @@ WORKDIR /backend
 COPY package.json package-lock.json ./
 RUN npm install
 
-CMD ["npm", "start"]
+COPY . .
+
+# CMD ["npm", "start"]

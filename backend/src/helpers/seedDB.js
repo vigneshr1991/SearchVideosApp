@@ -1,17 +1,15 @@
 require('dotenv').config();
-const mongoose = require('mongoose');
+const database = require('../utils/database');
 
 const JobModel = require('../models/JobModel');
 const YoutubeApiKeyModel = require('../models/YoutubeApiKeyModel');
 
 const logger = require('../utils/logger');
 
-const dbURI = `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
-
 const seedDb = async () => {
   const seedDBLogger = logger.getLogger('seed-db');
   try {
-    await mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
+    const dbConn = await database.connectDatabase();
     seedDBLogger.info('DB connected');
     seedDBLogger.info('Started seeding DB');
 
@@ -80,7 +78,7 @@ const seedDb = async () => {
     await Promise.all(promiseArr);
     seedDBLogger.info('Finished seeding DB successfully');
 
-    await mongoose.connection.close();
+    await dbConn.close();
     seedDBLogger.info('connection closed');
   } catch (err) {
     seedDBLogger.error('DB connection failed :', err.message);

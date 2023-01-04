@@ -1,7 +1,6 @@
 const axios = require('axios');
 
-const apiUrl = process.env.YOUTUBE_API_URL;
-
+const config = require('../config');
 const Video = require('../models/VideoModel');
 const YoutubeApiKey = require('../models/YoutubeApiKeyModel');
 
@@ -27,7 +26,7 @@ const fetchYoutubeVideos = async (searchQuery, resultsPerPage = 20, pageToken = 
 
     const { apiKey } = youtubeApiKey;
 
-    let url = `${apiUrl}/search?key=${apiKey}&order=date&type=video&part=snippet&q=${searchQuery}`;
+    let url = `${config.youtubeApiUrl}/search?key=${apiKey}&order=date&type=video&part=snippet&q=${searchQuery}`;
 
     if (resultsPerPage) {
       url = `${url}&maxResults=${resultsPerPage}`;

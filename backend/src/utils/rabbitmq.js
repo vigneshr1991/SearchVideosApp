@@ -1,9 +1,9 @@
 const amqp = require('amqplib');
 
-const amqpUrl = `amqp://${process.env.RABBITMQ_HOST}:${process.env.RABBITMQ_PORT}`;
+const config = require('../config');
 
-const connect = () => {
-  const conn = amqp.connect(amqpUrl);
+const connect = async () => {
+  const conn = await amqp.connect(config.rabbitURL);
   return conn;
 };
 

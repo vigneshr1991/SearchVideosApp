@@ -1,12 +1,11 @@
 require('dotenv').config();
 const cron = require('node-cron');
-const amqp = require('amqplib');
 
 const logger = require('../utils/logger');
+const rabbitmq = require('../utils/rabbitmq');
+const config = require('../config');
 
 const jobLogger = logger.getLogger('FetchYoutubeVideosProducerJob');
-
-const amqpUrl = `amqp://${process.env.RABBITMQ_HOST}:${process.env.RABBITMQ_PORT}`;
 
 const FetchYoutubeVideosProducerJob = cron.schedule(
   '*/10 * * * * *',
@@ -14,9 +13,9 @@ const FetchYoutubeVideosProducerJob = cron.schedule(
     const timeStamp = new Date().toLocaleString();
     jobLogger.info('Invoked FetchYoutubeVideosProducerJob :', timeStamp);
 
-    const queue = process.env.SEARCH_QUERY_QUEUE;
+    const queue = config.searchQueue;
     try {
-      const connection = await amqp.connect(amqpUrl);
+      const connection = await rabbitmq.connect();
       const channel = await connection.createChannel();
       await channel.assertQueue(queue);
 

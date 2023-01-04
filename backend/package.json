@@ -10,8 +10,8 @@
   "scripts": {
     "start": "npx nodemon server.js",
     "seed:db": "node ./src/helpers/seedDB.js",
-    "fetchYoutubeVideosProducerJob": "sleep 10 && node ./src/jobs/FetchYoutubeVideosProducerJob.js",
-    "fetchYoutubeVideosConsumerJob": "sleep 20 && node ./src/jobs/FetchYoutubeVideosConsumerJob.js",
+    "fetchYoutubeVideosProducerJob": "sleep 15 && node ./src/jobs/FetchYoutubeVideosProducerJob.js",
+    "fetchYoutubeVideosConsumerJob": "sleep 30 && node ./src/jobs/FetchYoutubeVideosConsumerJob.js",
     "format": "npx prettier --write .",
     "lint": "eslint ./src --fix",
     "test": "mocha src/**/__test__/* --timeout 60000 --exit",

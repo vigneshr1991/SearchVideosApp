@@ -17,8 +17,6 @@ const fetchYoutubeVideos = async (searchQuery, resultsPerPage = 20, pageToken = 
     youtubeApiKey = await YoutubeApiKey.findOne({
       quotaExceedDate: { $lte: new Date(new Date() - (24 * 60 * 60 * 1000)) },
     }).sort('lastUsedAt').exec();
-    // const youtubeApiKey = await YoutubeApiKey
-    //     .findById('63b3ff00e64b801f8e3e536f').sort('lastUsedAt').exec();
 
     if (!youtubeApiKey) {
       return {

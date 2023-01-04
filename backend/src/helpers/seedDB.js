@@ -1,18 +1,19 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
 
 const JobModel = require('../models/JobModel');
-const VideoModel = require('../models/VideoModel');
 const YoutubeApiKeyModel = require('../models/YoutubeApiKeyModel');
 
 const logger = require('../utils/logger');
 
-const dbURI = `${process.env.MONGO_HOST}/${process.env.MONGO_DB}`;
+const dbURI = `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
 
 const seedDb = async () => {
   const seedDBLogger = logger.getLogger('seed-db');
   try {
     await mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
     seedDBLogger.info('DB connected');
+    seedDBLogger.info('Started seeding DB');
 
     const seedJobData = [
       {
@@ -65,7 +66,6 @@ const seedDb = async () => {
     ];
 
     const deletePromiseArr = [
-      VideoModel.deleteMany({}),
       JobModel.deleteMany({}),
       YoutubeApiKeyModel.deleteMany({}),
     ];
@@ -78,6 +78,7 @@ const seedDb = async () => {
     ];
 
     await Promise.all(promiseArr);
+    seedDBLogger.info('Finished seeding DB successfully');
 
     await mongoose.connection.close();
     seedDBLogger.info('connection closed');

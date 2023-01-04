@@ -60,6 +60,12 @@ const search = async (searchQuery, lastPageTS, pageLimit = 10, sortBy = '-publis
   }
 };
 
+const test = () => {
+  searchServiceLogger.info('calling test service');
+  return new Date();
+};
+
 module.exports = {
   search,
+  test,
 };

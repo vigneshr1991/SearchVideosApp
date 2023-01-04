@@ -1,22 +1,20 @@
-#!/usr/bin/env node
 require('dotenv').config();
 const http = require('http');
 
 const database = require('./src/database');
 const app = require('./src/app');
-const jobs = require('./src/jobs');
 
 const logger = require('./src/utils/logger');
 
 async function startServer() {
+  console.log('PROCESS ENV :', process.env);
   const serverLogger = logger.getLogger('server');
-  const port = Number(process.env.PORT || '3001');
+  const port = Number(process.env.APP_PORT || '3001');
   app.set('port', port);
 
   try {
     await database.connectDatabase();
     serverLogger.info('connected to database');
-    jobs.startAllJobs();
   } catch (error) {
     serverLogger.error('Server start failed :', error);
     process.exit(1);

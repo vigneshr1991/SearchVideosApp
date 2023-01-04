@@ -176,10 +176,10 @@ const Videos = (props) => {
                 {loading && <Spinner animation="border" />}
                 {videos && videos.length ? videos : <NoMoviesFound>No Videos found</NoMoviesFound>}
             </ListContainer>
-            <Pagination>
+            {/* <Pagination>
                 <Button variant="secondary">Previous</Button>
                 <Button variant="secondary">Next</Button>
-            </Pagination>
+            </Pagination> */}
         </MovieContainer>
     )
 }

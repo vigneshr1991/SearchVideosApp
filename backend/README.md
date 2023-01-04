@@ -25,6 +25,15 @@ In the project directory, you can run:
 
 This command will seed 2 database(Jobs and YoutubeApiKeys).
 
+### `npm run fetchYoutubeVideosProducerJob`
+
+FetchYoutubeVideosProducerJob will run every 10 seconds using cron tab and produces a message to `SEARCH_QUEUE`.
+
+### `npm run fetchYoutubeVideosConsumerJob`
+
+fetchYoutubeVideosConsumerJob is a consumer listens to `SEARCH_QUEUE` and fetches youtube videos and stores in mongo db.
+It first fetches the oldest youtube api key from `YoutubeApiKeys` model (round rabin fashion) and uses it to fetch the `Youtube API`.
+
 ### `npm start`
 
 Runs the app in the development mode.\
@@ -40,6 +49,12 @@ For linting the application(used `ESLint`)
 ### `npm run format`
 
 For formatting the application(used `Prettier`)
+
+### Database
+
+1. Jobs Model - stores job related details
+2. YoutubeApiKeys - stores set of youtube api keys
+3. videos - stores videos data fetched from youtube api(added full text search index on title and description fields)
 
 
 ### Test API
